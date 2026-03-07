@@ -1,0 +1,47 @@
+.opencode/skills/hevy-api/scripts/create-routine.ts
+  fa26cc36f491683d 1-52,54-128
+.opencode/skills/hevy-api/SKILL.md
+  fa26cc36f491683d 81-110
+.opencode/agents/gym-ai-trainer.md
+  fa26cc36f491683d 127-146,149-150
+.opencode/skills/hevy-api/scripts/update-routine.ts
+  fa26cc36f491683d 11,17,23-28,31-32,34-35,38-63,65-70,73-76,79,81-85,91-102,107,113,122,127-128,134
+  29392a5d74b7176f 1-10,12-16,18-22,29-30,33,36-37,64,71-72,77-78,86-90,103-106,108-112,114-121,123-126,129-133,135-140
+.opencode/skills/hevy-api/references/HEVY-API.md
+  fa26cc36f491683d 112-158
+.opencode/skills/hevy-api/scripts/fetch-routines.ts
+  29392a5d74b7176f 52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "ecc1a5b7c32dfc39a7123a73e07602392733e1c1",
+  "prompts": {
+    "29392a5d74b7176f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_335ebdc5effeoXnyQQL0bclwD2",
+        "model": "anthropic/claude-sonnet-4-20250514"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 110,
+      "total_deletions": 2,
+      "accepted_lines": 68,
+      "overriden_lines": 0
+    },
+    "fa26cc36f491683d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3363aa28effeVBsKM9IyPPHazq",
+        "model": "anthropic/claude-opus-4-5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 309,
+      "total_deletions": 44,
+      "accepted_lines": 298,
+      "overriden_lines": 2
+    }
+  }
+}
