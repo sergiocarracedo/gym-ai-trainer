@@ -1,0 +1,25 @@
+start.sh
+  fa26cc36f491683d 4-5,9-57,59,61-64,66,70
+.opencode/agents/gym-ai-trainer.md
+  fa26cc36f491683d 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "5f834187f9f6081568ace9614ba7c822925f6f0b",
+  "prompts": {
+    "fa26cc36f491683d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3363aa28effeVBsKM9IyPPHazq",
+        "model": "anthropic/claude-opus-4-5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 61,
+      "total_deletions": 3,
+      "accepted_lines": 60,
+      "overriden_lines": 0
+    }
+  }
+}
