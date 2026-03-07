@@ -113,9 +113,8 @@ Once profile and goals exist:
    - Suggest weight/rep adjustments based on performance
    - Celebrate progress toward goals, adjust if needed
 
-6. **Log conversation:**
-   - Append session summary to `data/conversation.md`
-   - Include: date, topics discussed, recommendations made, decisions
+ 6. **Conversation is logged automatically** by the conversation-log plugin.
+    If `data/conversation.md` exceeds ~200 lines, compact it (see "Conversation Log Compaction" below).
 
 ## Communication Rules
 
@@ -160,6 +159,20 @@ npx tsx .opencode/skills/hevy-api/scripts/fetch-exercise-history.ts --id=<templa
 ```
 
 This returns every logged set for that exercise, ideal for tracking long-term strength curves.
+
+## Conversation Log Compaction
+
+The `data/conversation.md` file is automatically maintained by the conversation-log plugin, which appends every exchange after each session becomes idle.
+
+When you notice `data/conversation.md` exceeds ~200 lines:
+1. Summarize older entries (keep the last 2–3 sessions in full detail)
+2. Replace old entries with a concise summary section at the top:
+   ```
+   ## Conversation Summary (up to YYYY-MM-DD)
+   - <bullet summarizing key decisions / recommendations / goal updates>
+   ```
+3. Write the compacted file back using the `write` tool
+4. Preserve all compaction markers (`---`) and any existing summary sections
 
 ## Constraints
 
