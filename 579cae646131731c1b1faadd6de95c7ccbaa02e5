@@ -1,0 +1,48 @@
+lefthook.yml
+  fa26cc36f491683d 1-27
+.gitignore
+  fa26cc36f491683d 31-33
+README.md
+  fa26cc36f491683d 120-157
+.lefthook/check-secrets.sh
+  fa26cc36f491683d 1-30
+package.json
+  fa26cc36f491683d 8-13
+oxlint.json
+  fa26cc36f491683d 1-14
+.opencode/skills/hevy-api/scripts/fetch-workouts.ts
+  29392a5d74b7176f 76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "579cae646131731c1b1faadd6de95c7ccbaa02e5",
+  "prompts": {
+    "29392a5d74b7176f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_335ebdc5effeoXnyQQL0bclwD2",
+        "model": "anthropic/claude-sonnet-4-20250514"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "fa26cc36f491683d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3363aa28effeVBsKM9IyPPHazq",
+        "model": "anthropic/claude-opus-4-5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 144,
+      "total_deletions": 69,
+      "accepted_lines": 118,
+      "overriden_lines": 0
+    }
+  }
+}
