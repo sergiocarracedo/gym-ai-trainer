@@ -49,7 +49,7 @@ async function fetchRoutines(): Promise<void> {
 
   try {
     while (hasMore) {
-      const response = await fetch(`${API_BASE}/routines?page=${page}&pageSize=50`, {
+      const response = await fetch(`${API_BASE}/routines?page=${page}&pageSize=10`, {
         headers: {
           "api-key": API_KEY,
           "Content-Type": "application/json",

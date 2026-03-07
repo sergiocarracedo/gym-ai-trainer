@@ -78,6 +78,36 @@ Analyzes recent performance and suggests routine modifications:
 - Rep range adjustments
 - Exercise substitutions for plateaus
 
+### Create Routine
+
+```bash
+npx tsx .opencode/skills/hevy-api/scripts/create-routine.ts --routine=<json>
+```
+
+Creates a new routine in Hevy via `POST /routines`. The `--routine` argument must be a JSON object with:
+- `title` (string, required): Name of the routine
+- `folder_id` (string | null, optional): Folder to place the routine in
+- `exercises` (array, optional): List of exercises, each with:
+  - `index` (number): Order position
+  - `exercise_template_id` (string): ID from `GET /exercise_templates`
+  - `superset_id` (string | null): Group exercises into a superset
+  - `notes` (string): Per-exercise notes
+  - `sets` (array): Each set needs `index`, `type`, `weight_kg`, `reps`
+
+Returns the created routine object as JSON. Use `fetch-routines.ts` and `GET /exercise_templates` to look up valid IDs first.
+
+### Update Routine
+
+```bash
+npx tsx .opencode/skills/hevy-api/scripts/update-routine.ts --id=<routineId> --routine=<json>
+```
+
+Updates an existing routine in Hevy via `PUT /routines/{id}`. Requires:
+- `--id`: The routine ID (obtain from `fetch-routines.ts`)
+- `--routine`: Full routine JSON (same shape as `create-routine.ts`) — replaces the entire routine
+
+Returns the updated routine object as JSON.
+
 ## Output Format
 
 All scripts output JSON to stdout. Parse the output to use in recommendations.

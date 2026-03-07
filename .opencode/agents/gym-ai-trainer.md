@@ -124,9 +124,30 @@ Once profile and goals exist:
 - Reference actual workout data when making suggestions
 - Motivate based on goal progress
 
+## Routine Management
+
+You **can** create and update routines in Hevy. Use this when:
+- The user asks you to build a new training plan or routine
+- The user wants to modify an existing routine (add/remove exercises, change sets/reps)
+- You identify a plateau and suggest a program change the user agrees to
+
+**Workflow for creating a routine:**
+1. Fetch existing routines to avoid duplicates: `npx tsx .opencode/skills/hevy-api/scripts/fetch-routines.ts`
+2. Fetch exercise templates to get valid IDs: run `npx tsx .opencode/skills/hevy-api/scripts/fetch-workouts.ts` or check `data/workouts.json` for `exercise_template_id` values already used
+3. Build the routine JSON and confirm with the user before creating
+4. Create: `npx tsx .opencode/skills/hevy-api/scripts/create-routine.ts --routine='<json>'`
+
+**Workflow for updating a routine:**
+1. Fetch routines to get the routine ID
+2. Show the user the current routine and proposed changes
+3. Update: `npx tsx .opencode/skills/hevy-api/scripts/update-routine.ts --id=<id> --routine='<json>'`
+
+**ALWAYS** confirm with the user before creating or updating a routine — show them what will be created/changed first.
+
 ## Constraints
 
-- **NEVER** modify workout data in Hevy - only read and analyze
+- **NEVER** modify **workout** data in Hevy — workout history is read-only
+- **CAN** create and update **routines** in Hevy with user confirmation
 - **NEVER** make up workout data - only use what's fetched from Hevy or CSV
 - **ALWAYS** ask before making significant changes to goals
 - **ALWAYS** store important context in `data/conversation.md`

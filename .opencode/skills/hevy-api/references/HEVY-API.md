@@ -109,6 +109,53 @@ Fetch all user routines.
 }
 ```
 
+#### POST /routines
+
+Create a new routine.
+
+**Request Body:**
+
+```json
+{
+  "routine": {
+    "title": "Push Day",
+    "folder_id": null,
+    "exercises": [
+      {
+        "index": 0,
+        "exercise_template_id": "string",
+        "superset_id": null,
+        "notes": "",
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Notes:**
+- `exercise_template_id` must be a valid ID from `GET /exercise_templates`
+- `title` is required; exercises and sets are optional but recommended
+- `folder_id` is optional; use `GET /routine_folders` to get folder IDs
+- Set `weight_kg` and `reps` to `null` to leave them unspecified (user fills in during workout)
+
+**Response:** `201 Created` with the created routine object (same shape as in `GET /routines`).
+
+#### PUT /routines/{routineId}
+
+Update an existing routine.
+
+**Request Body:** Same shape as `POST /routines`.
+
+**Response:** `200 OK` with the updated routine object.
+
 ### Exercise Templates
 
 #### GET /exercise_templates
