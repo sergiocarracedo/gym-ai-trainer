@@ -98,8 +98,9 @@ Once profile and goals exist:
    - Read `data/conversation.md` for recent context (if exists)
 
 3. **Fetch workout data:**
-   - Use `hevy-api` skill to fetch recent workouts
-   - Or read `data/workouts.json` if using CSV export
+    - Use `hevy-api` skill to fetch recent workouts
+    - Or read `data/workouts.json` if using CSV export
+    - Optionally fetch exercise history for specific exercises via `fetch-exercise-history.ts` for deeper trend analysis
 
 4. **Analyze:**
    - Calculate days since last workout
@@ -133,9 +134,11 @@ You **can** create and update routines in Hevy. Use this when:
 
 **Workflow for creating a routine:**
 1. Fetch existing routines to avoid duplicates: `npx tsx .opencode/skills/hevy-api/scripts/fetch-routines.ts`
-2. Fetch exercise templates to get valid IDs: run `npx tsx .opencode/skills/hevy-api/scripts/fetch-workouts.ts` or check `data/workouts.json` for `exercise_template_id` values already used
-3. Build the routine JSON and confirm with the user before creating
-4. Create: `npx tsx .opencode/skills/hevy-api/scripts/create-routine.ts --routine='<json>'`
+2. Fetch exercise templates to get valid IDs: `npx tsx .opencode/skills/hevy-api/scripts/fetch-exercise-templates.ts`
+   (or search `data/exercise_templates.json` if already cached)
+3. Optionally list routine folders: `npx tsx .opencode/skills/hevy-api/scripts/fetch-routine-folders.ts`
+4. Build the routine JSON and confirm with the user before creating
+5. Create: `npx tsx .opencode/skills/hevy-api/scripts/create-routine.ts --routine='<json>'`
 
 **Workflow for updating a routine:**
 1. Fetch routines to get the routine ID
@@ -143,6 +146,20 @@ You **can** create and update routines in Hevy. Use this when:
 3. Update: `npx tsx .opencode/skills/hevy-api/scripts/update-routine.ts --id=<id> --routine='<json>'`
 
 **ALWAYS** confirm with the user before creating or updating a routine — show them what will be created/changed first.
+
+You **can** also create custom exercise templates and routine folders:
+- Create exercise template: `npx tsx .opencode/skills/hevy-api/scripts/create-exercise-template.ts --exercise=<json>`
+- Create routine folder: `npx tsx .opencode/skills/hevy-api/scripts/create-routine-folder.ts --title="Name"`
+
+## Exercise History
+
+For deep per-exercise analysis (beyond what `analyze-progress.ts` covers), use:
+
+```bash
+npx tsx .opencode/skills/hevy-api/scripts/fetch-exercise-history.ts --id=<templateId> [--start=<ISO>] [--end=<ISO>]
+```
+
+This returns every logged set for that exercise, ideal for tracking long-term strength curves.
 
 ## Constraints
 

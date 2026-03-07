@@ -10,18 +10,18 @@ All requests require the `api-key` header:
 api-key: your-api-key-here
 ```
 
-## Endpoints
+---
 
-### Workouts
+## Workouts
 
-#### GET /workouts
+### GET /workouts
 
-Fetch user workouts with pagination.
+Fetch a paginated list of workouts.
 
 **Query Parameters:**
 
-- `page` (integer): Page number (default: 1)
-- `pageSize` (integer): Items per page (default: 10, max: 10)
+- `page` (integer): Page number, must be ≥ 1 (default: 1)
+- `pageSize` (integer): Items per page, max 10 (default: 5)
 
 **Response:**
 
@@ -31,27 +31,31 @@ Fetch user workouts with pagination.
   "page_count": 5,
   "workouts": [
     {
-      "id": "string",
-      "title": "string",
-      "description": "string",
-      "start_time": "2024-01-15T10:30:00Z",
-      "end_time": "2024-01-15T11:45:00Z",
+      "id": "b459cba5-cd6d-463c-abd6-54f8eafcadcb",
+      "title": "Morning Workout",
+      "routine_id": "b459cba5-cd6d-463c-abd6-54f8eafcadcb",
+      "description": "Pushed myself to the limit today!",
+      "start_time": "2021-09-14T12:00:00Z",
+      "end_time": "2021-09-14T12:00:00Z",
+      "updated_at": "2021-09-14T12:00:00Z",
+      "created_at": "2021-09-14T12:00:00Z",
       "exercises": [
         {
           "index": 0,
           "title": "Bench Press (Barbell)",
-          "exercise_template_id": "string",
-          "superset_id": null,
-          "notes": "string",
+          "notes": "Paid closer attention to form today.",
+          "exercise_template_id": "05293BCA",
+          "supersets_id": 0,
           "sets": [
             {
               "index": 0,
               "type": "normal",
-              "weight_kg": 80,
+              "weight_kg": 100,
               "reps": 10,
               "distance_meters": null,
               "duration_seconds": null,
-              "rpe": 8
+              "rpe": 9.5,
+              "custom_metric": 50
             }
           ]
         }
@@ -61,45 +65,154 @@ Fetch user workouts with pagination.
 }
 ```
 
-#### GET /workouts/{workoutId}
+### GET /workouts/count
 
-Fetch a specific workout by ID.
+Get the total number of workouts on the account.
 
-### Routines
+**Response:**
 
-#### GET /routines
+```json
+{
+  "workout_count": 42
+}
+```
 
-Fetch all user routines.
+### GET /workouts/events
+
+Retrieve a paginated list of workout events (updates or deletes) since a given date.
+Ordered newest to oldest. Use to keep a local cache up to date without fetching all workouts.
 
 **Query Parameters:**
 
-- `page` (integer): Page number (default: 1)
-- `pageSize` (integer): Items per page (default: 10)
+- `page` (integer): Page number, must be ≥ 1 (default: 1)
+- `pageSize` (integer): Items per page, max 10 (default: 5)
+- `since` (string, ISO 8601): Only return events after this date (default: `1970-01-01T00:00:00Z`)
 
 **Response:**
 
 ```json
 {
   "page": 1,
-  "page_count": 1,
+  "page_count": 5,
+  "events": [
+    {
+      "type": "updated",
+      "workout": {
+        "id": "b459cba5-cd6d-463c-abd6-54f8eafcadcb",
+        "title": "Morning Workout",
+        "routine_id": "b459cba5-cd6d-463c-abd6-54f8eafcadcb",
+        "description": "Pushed myself to the limit today!",
+        "start_time": "2021-09-14T12:00:00Z",
+        "end_time": "2021-09-14T12:00:00Z",
+        "updated_at": "2021-09-14T12:00:00Z",
+        "created_at": "2021-09-14T12:00:00Z",
+        "exercises": [
+          {
+            "index": 0,
+            "title": "Bench Press (Barbell)",
+            "notes": "Great session!",
+            "exercise_template_id": "05293BCA",
+            "supersets_id": 0,
+            "sets": [
+              {
+                "index": 0,
+                "type": "normal",
+                "weight_kg": 100,
+                "reps": 10,
+                "distance_meters": null,
+                "duration_seconds": null,
+                "rpe": 9.5,
+                "custom_metric": 50
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "deleted",
+      "id": "efe6801c-4aee-4959-bcdd-fca3f272821b",
+      "deleted_at": "2021-09-13T12:00:00Z"
+    }
+  ]
+}
+```
+
+### GET /workouts/{workoutId}
+
+Fetch a specific workout by ID.
+
+**Path Parameters:**
+
+- `workoutId` (string, required): The ID of the workout
+
+**Response:** Single workout object (same shape as items in `GET /workouts`).
+
+---
+
+## Users
+
+### GET /user/info
+
+Get info about the authenticated user.
+
+**Response:**
+
+```json
+{
+  "data": {
+    "id": "9c465af3-de7d-42bc-9c7c-f0170396358b",
+    "name": "John Doe",
+    "url": "https://hevy.com/user/john"
+  }
+}
+```
+
+---
+
+## Routines
+
+### GET /routines
+
+Fetch a paginated list of routines.
+
+**Query Parameters:**
+
+- `page` (integer): Page number, must be ≥ 1 (default: 1)
+- `pageSize` (integer): Items per page, max 10 (default: 5)
+
+**Response:**
+
+```json
+{
+  "page": 1,
+  "page_count": 5,
   "routines": [
     {
-      "id": "string",
-      "title": "Push Day",
-      "folder_id": null,
+      "id": "b459cba5-cd6d-463c-abd6-54f8eafcadcb",
+      "title": "Upper Body",
+      "folder_id": 42,
+      "updated_at": "2021-09-14T12:00:00Z",
+      "created_at": "2021-09-14T12:00:00Z",
       "exercises": [
         {
           "index": 0,
           "title": "Bench Press (Barbell)",
-          "exercise_template_id": "string",
-          "superset_id": null,
-          "notes": "",
+          "rest_seconds": "60",
+          "notes": "Focus on form.",
+          "exercise_template_id": "05293BCA",
+          "supersets_id": 0,
           "sets": [
             {
               "index": 0,
               "type": "normal",
-              "weight_kg": null,
-              "reps": null
+              "weight_kg": 100,
+              "reps": 10,
+              "rep_range": { "start": 8, "end": 12 },
+              "distance_meters": null,
+              "duration_seconds": null,
+              "rpe": 9.5,
+              "custom_metric": 50
             }
           ]
         }
@@ -109,7 +222,30 @@ Fetch all user routines.
 }
 ```
 
-#### POST /routines
+### GET /routines/{routineId}
+
+Fetch a specific routine by ID.
+
+**Path Parameters:**
+
+- `routineId` (string, required): The ID of the routine
+
+**Response:**
+
+```json
+{
+  "routine": {
+    "id": "b459cba5-cd6d-463c-abd6-54f8eafcadcb",
+    "title": "Upper Body",
+    "folder_id": 42,
+    "updated_at": "2021-09-14T12:00:00Z",
+    "created_at": "2021-09-14T12:00:00Z",
+    "exercises": [ ... ]
+  }
+}
+```
+
+### POST /routines
 
 Create a new routine.
 
@@ -118,20 +254,24 @@ Create a new routine.
 ```json
 {
   "routine": {
-    "title": "Push Day",
+    "title": "April Leg Day",
     "folder_id": null,
+    "notes": "Focus on form over weight. Remember to stretch.",
     "exercises": [
       {
-        "index": 0,
-        "exercise_template_id": "string",
+        "exercise_template_id": "D04AC939",
         "superset_id": null,
-        "notes": "",
+        "rest_seconds": 90,
+        "notes": "Stay slow and controlled.",
         "sets": [
           {
-            "index": 0,
             "type": "normal",
-            "weight_kg": null,
-            "reps": null
+            "weight_kg": 100,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "custom_metric": null,
+            "rep_range": { "start": 8, "end": 12 }
           }
         ]
       }
@@ -142,40 +282,58 @@ Create a new routine.
 
 **Notes:**
 - `exercise_template_id` must be a valid ID from `GET /exercise_templates`
-- `title` is required; exercises and sets are optional but recommended
-- `folder_id` is optional; use `GET /routine_folders` to get folder IDs
-- Set `weight_kg` and `reps` to `null` to leave them unspecified (user fills in during workout)
+- `title` is required
+- `folder_id` is optional; use `GET /routine_folders` to list available folder IDs
+- `rest_seconds` is optional per-exercise rest timer
+- `rep_range` is optional; use to specify a target rep range instead of a fixed rep count
+- Set `weight_kg` and `reps` to `null` to leave them unspecified
 
-**Response:** `201 Created` with the created routine object (same shape as in `GET /routines`).
+**Response:** `201 Created` — the created routine object (same shape as `GET /routines/{routineId}`).
 
-#### PUT /routines/{routineId}
+### PUT /routines/{routineId}
 
-Update an existing routine.
+Update an existing routine. Replaces the entire routine.
 
-**Request Body:** Same shape as `POST /routines`.
+**Path Parameters:**
 
-**Response:** `200 OK` with the updated routine object.
+- `routineId` (string, required): The ID of the routine to update
 
-### Exercise Templates
+**Request Body:** Same shape as `POST /routines` (without `folder_id` in PUT):
 
-#### GET /exercise_templates
+```json
+{
+  "routine": {
+    "title": "April Leg Day (Updated)",
+    "notes": "Focus on form over weight. Remember to stretch.",
+    "exercises": [ ... ]
+  }
+}
+```
 
-Fetch available exercise templates.
+**Response:** `200 OK` — the updated routine object.
+
+---
+
+## Exercise Templates
+
+### GET /exercise_templates
+
+Fetch a paginated list of exercise templates available on the account (built-in + custom).
 
 **Query Parameters:**
 
-- `page` (integer): Page number
-- `pageSize` (integer): Items per page
+- `page` (integer): Page number, must be ≥ 1 (default: 1)
+- `pageSize` (integer): Items per page, max 100 (default: 5)
 
 **Response:**
 
 ```json
 {
   "page": 1,
-  "page_count": 10,
+  "page_count": 5,
   "exercise_templates": [
     {
-      "id": "string",
+      "id": "b459cba5-cd6d-463c-abd6-54f8eafcadcb",
       "title": "Bench Press (Barbell)",
       "type": "weight_reps",
       "primary_muscle_group": "chest",
@@ -186,11 +344,154 @@ Fetch available exercise templates.
 }
 ```
 
-### Routine Folders
+### GET /exercise_templates/{exerciseTemplateId}
 
-#### GET /routine_folders
+Fetch a specific exercise template by ID.
 
-Fetch routine folders for organization.
+**Path Parameters:**
+
+- `exerciseTemplateId` (string, required): The ID of the exercise template
+
+**Response:** Single exercise template object (same shape as items in `GET /exercise_templates`).
+
+### POST /exercise_templates
+
+Create a new custom exercise template.
+
+**Request Body:**
+
+```json
+{
+  "exercise": {
+    "title": "Bench Press",
+    "exercise_type": "weight_reps",
+    "equipment_category": "barbell",
+    "muscle_group": "chest",
+    "other_muscles": ["biceps", "triceps"]
+  }
+}
+```
+
+**Response:** `201 Created`
+
+```json
+{
+  "id": 123
+}
+```
+
+**Error Responses:**
+- `400` — Invalid request body
+- `403` — `exceeds-custom-exercise-limit` (account limit reached)
+
+---
+
+## Routine Folders
+
+### GET /routine_folders
+
+Fetch a paginated list of routine folders.
+
+**Query Parameters:**
+
+- `page` (integer): Page number, must be ≥ 1 (default: 1)
+- `pageSize` (integer): Items per page, max 10 (default: 5)
+
+**Response:**
+
+```json
+{
+  "page": 1,
+  "page_count": 5,
+  "routine_folders": [
+    {
+      "id": 42,
+      "index": 1,
+      "title": "Push Pull",
+      "updated_at": "2021-09-14T12:00:00Z",
+      "created_at": "2021-09-14T12:00:00Z"
+    }
+  ]
+}
+```
+
+### GET /routine_folders/{folderId}
+
+Fetch a specific routine folder by ID.
+
+**Path Parameters:**
+
+- `folderId` (integer, required): The ID of the routine folder
+
+**Response:** Single folder object (same shape as items in `GET /routine_folders`).
+
+### POST /routine_folders
+
+Create a new routine folder. The folder is created at index 0; all other folders have their indexes incremented.
+
+**Request Body:**
+
+```json
+{
+  "routine_folder": {
+    "title": "Push Pull"
+  }
+}
+```
+
+**Response:** `201 Created`
+
+```json
+{
+  "id": 42,
+  "index": 1,
+  "title": "Push Pull",
+  "updated_at": "2021-09-14T12:00:00Z",
+  "created_at": "2021-09-14T12:00:00Z"
+}
+```
+
+---
+
+## Exercise History
+
+### GET /exercise_history/{exerciseTemplateId}
+
+Fetch all historical sets logged for a specific exercise template.
+
+**Path Parameters:**
+
+- `exerciseTemplateId` (string, required): The ID of the exercise template
+
+**Query Parameters:**
+
+- `start_date` (string, ISO 8601, optional): Filter results from this date (e.g. `2024-01-01T00:00:00Z`)
+- `end_date` (string, ISO 8601, optional): Filter results up to this date (e.g. `2024-12-31T23:59:59Z`)
+
+**Response:**
+
+```json
+{
+  "exercise_history": [
+    {
+      "workout_id": "b459cba5-cd6d-463c-abd6-54f8eafcadcb",
+      "workout_title": "Morning Workout",
+      "workout_start_time": "2024-01-01T12:00:00Z",
+      "workout_end_time": "2024-01-01T13:00:00Z",
+      "exercise_template_id": "D04AC939",
+      "weight_kg": 100,
+      "reps": 10,
+      "distance_meters": null,
+      "duration_seconds": null,
+      "rpe": 8.5,
+      "custom_metric": null,
+      "set_type": "normal"
+    }
+  ]
+}
+```
+
+---
 
 ## Set Types
 
@@ -206,15 +507,23 @@ Fetch routine folders for organization.
 - `weighted_bodyweight`: Bodyweight with added weight
 - `assisted_bodyweight`: Assisted bodyweight (negative weight)
 - `duration`: Time-based exercises
-- `distance`: Distance-based exercises
+- `distance_duration`: Distance and duration
+- `weight_distance`: Weight with distance
 - `weight_duration`: Weight with time
+
+## Equipment Categories
+
+- `barbell`, `dumbbell`, `cable`, `machine`, `smith_machine`
+- `ez_bar`, `trap_bar`, `kettlebell`, `plate`
+- `resistance_band`, `suspension`, `other`, `none`
 
 ## Muscle Groups
 
 Primary muscle groups:
+- `chest`, `back`, `shoulders`, `biceps`, `triceps`, `forearms`
+- `core`, `quadriceps`, `hamstrings`, `glutes`, `calves`, `cardio`, `other`
 
-- chest, back, shoulders, biceps, triceps, forearms
-- core, quadriceps, hamstrings, glutes, calves, cardio, other
+---
 
 ## Rate Limits
 
@@ -225,14 +534,15 @@ Primary muscle groups:
 
 ```json
 {
-  "error": "string",
-  "message": "string"
+  "error": "string"
 }
 ```
 
 Common status codes:
 
-- 401: Invalid or missing API key
-- 404: Resource not found
-- 429: Rate limit exceeded
-- 500: Server error
+- `400`: Bad request / invalid body
+- `401`: Invalid or missing API key
+- `403`: Forbidden (e.g. exceeded custom exercise limit)
+- `404`: Resource not found
+- `429`: Rate limit exceeded
+- `500`: Server error
