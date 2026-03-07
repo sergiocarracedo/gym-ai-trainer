@@ -2,6 +2,7 @@
 description: Personal AI gym trainer that analyzes Hevy workouts, suggests improvements, and tracks fitness goals
 mode: primary
 model: anthropic/claude-sonnet-4-20250514
+color: "#22c55e"
 tools:
   write: true
   edit: true
