@@ -100,27 +100,25 @@ function parseGoalsMd(content: string): Goal[] {
 
 function findLatestExerciseData(
   workouts: HevyWorkout[],
-  exerciseName: string
+  exerciseName: string,
 ): { date: string; sets: number; avgReps: number; maxWeight: number } | null {
   const normalizedName = exerciseName.toLowerCase();
 
   // Sort workouts by date descending
   const sorted = [...workouts].sort(
-    (a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
+    (a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime(),
   );
 
   for (const workout of sorted) {
     for (const exercise of workout.exercises) {
       if (exercise.title.toLowerCase().includes(normalizedName)) {
         const workingSets = exercise.sets.filter(
-          (s) => s.type === "normal" && s.weight_kg && s.reps
+          (s) => s.type === "normal" && s.weight_kg && s.reps,
         );
 
         if (workingSets.length === 0) continue;
 
-        const avgReps =
-          workingSets.reduce((sum, s) => sum + (s.reps || 0), 0) /
-          workingSets.length;
+        const avgReps = workingSets.reduce((sum, s) => sum + (s.reps || 0), 0) / workingSets.length;
         const maxWeight = Math.max(...workingSets.map((s) => s.weight_kg || 0));
 
         return {
@@ -136,11 +134,7 @@ function findLatestExerciseData(
   return null;
 }
 
-function calculateProgress(
-  current: number,
-  start: number,
-  target: number
-): number {
+function calculateProgress(current: number, start: number, target: number): number {
   if (target === start) return current >= target ? 100 : 0;
   const progress = ((current - start) / (target - start)) * 100;
   return Math.min(100, Math.max(0, Math.round(progress)));
@@ -154,7 +148,7 @@ async function checkGoalProgress(): Promise<void> {
     console.error(
       JSON.stringify({
         error: "No goals.md found. Goals need to be set first.",
-      })
+      }),
     );
     process.exit(1);
   }
@@ -163,15 +157,13 @@ async function checkGoalProgress(): Promise<void> {
     console.error(
       JSON.stringify({
         error: "No workouts data found. Run fetch-workouts.ts first.",
-      })
+      }),
     );
     process.exit(1);
   }
 
   const goalsContent = readFileSync(goalsPath, "utf-8");
-  const workouts: HevyWorkout[] = JSON.parse(
-    readFileSync(workoutsPath, "utf-8")
-  );
+  const workouts: HevyWorkout[] = JSON.parse(readFileSync(workoutsPath, "utf-8"));
 
   const goals = parseGoalsMd(goalsContent);
 
@@ -180,7 +172,7 @@ async function checkGoalProgress(): Promise<void> {
       JSON.stringify({
         message: "No measurable goals found in goals.md",
         hint: "Goals should be in a table format: | Exercise | Current | Target | Deadline | Status |",
-      })
+      }),
     );
     return;
   }
@@ -192,12 +184,13 @@ async function checkGoalProgress(): Promise<void> {
     const latest = findLatestExerciseData(workouts, goal.exercise);
     const deadlineDate = new Date(goal.deadline);
     const daysRemaining = Math.ceil(
-      (deadlineDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+      (deadlineDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
     );
 
     let progress = { setsProgress: 0, repsProgress: 0, weightProgress: 0, overallProgress: 0 };
     let status: GoalProgress["status"] = "no_data";
-    let recommendation = "No recent data for this exercise. Try completing a workout with this exercise.";
+    let recommendation =
+      "No recent data for this exercise. Try completing a workout with this exercise.";
 
     if (latest) {
       progress = {
@@ -207,14 +200,11 @@ async function checkGoalProgress(): Promise<void> {
         overallProgress: 0,
       };
       progress.overallProgress = Math.round(
-        (progress.setsProgress + progress.repsProgress + progress.weightProgress) / 3
+        (progress.setsProgress + progress.repsProgress + progress.weightProgress) / 3,
       );
 
       // Determine status based on time remaining and progress
-      const expectedProgress = Math.max(
-        0,
-        100 - (daysRemaining / 30) * 100
-      ); // Assuming 30-day goals
+      const expectedProgress = Math.max(0, 100 - (daysRemaining / 30) * 100); // Assuming 30-day goals
 
       if (progress.overallProgress >= 100) {
         status = "ahead";

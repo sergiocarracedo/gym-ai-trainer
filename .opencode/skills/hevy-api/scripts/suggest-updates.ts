@@ -45,7 +45,7 @@ interface Suggestion {
 function analyzeExerciseHistory(
   workouts: HevyWorkout[],
   exerciseName: string,
-  minSessions: number = 3
+  minSessions: number = 3,
 ): ExerciseHistory | null {
   const normalizedName = exerciseName.toLowerCase();
   const sessions: ExerciseHistory["sessions"] = [];
@@ -54,14 +54,12 @@ function analyzeExerciseHistory(
     for (const exercise of workout.exercises) {
       if (exercise.title.toLowerCase() === normalizedName) {
         const workingSets = exercise.sets.filter(
-          (s) => s.type === "normal" && s.weight_kg && s.reps
+          (s) => s.type === "normal" && s.weight_kg && s.reps,
         );
 
         if (workingSets.length === 0) continue;
 
-        const avgReps =
-          workingSets.reduce((sum, s) => sum + (s.reps || 0), 0) /
-          workingSets.length;
+        const avgReps = workingSets.reduce((sum, s) => sum + (s.reps || 0), 0) / workingSets.length;
         const maxWeight = Math.max(...workingSets.map((s) => s.weight_kg || 0));
         const rpeSets = workingSets.filter((s) => s.rpe !== null);
         const avgRPE =
@@ -83,9 +81,7 @@ function analyzeExerciseHistory(
   if (sessions.length < minSessions) return null;
 
   // Sort by date (oldest first)
-  sessions.sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
+  sessions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return { exercise: exerciseName, sessions };
 }
@@ -98,8 +94,7 @@ function generateSuggestion(history: ExerciseHistory): Suggestion {
   const weights = recent.map((s) => s.maxWeight);
   const reps = recent.map((s) => s.avgReps);
 
-  const weightVariance =
-    Math.max(...weights) - Math.min(...weights);
+  const weightVariance = Math.max(...weights) - Math.min(...weights);
   const avgReps = reps.reduce((a, b) => a + b, 0) / reps.length;
   const latestWeight = latest.maxWeight;
 
@@ -176,14 +171,12 @@ async function suggestUpdates(): Promise<void> {
     console.error(
       JSON.stringify({
         error: "No workouts data found. Run fetch-workouts.ts first.",
-      })
+      }),
     );
     process.exit(1);
   }
 
-  const workouts: HevyWorkout[] = JSON.parse(
-    readFileSync(workoutsPath, "utf-8")
-  );
+  const workouts: HevyWorkout[] = JSON.parse(readFileSync(workoutsPath, "utf-8"));
 
   // Get unique exercises from recent workouts
   const exerciseSet = new Set<string>();

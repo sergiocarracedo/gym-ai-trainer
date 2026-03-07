@@ -5,12 +5,20 @@
   "type": "module",
   "scripts": {
     "start": "opencode --agent gym-ai-trainer",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint .opencode/skills/**/*.ts",
+    "lint:fix": "oxlint --fix .opencode/skills/**/*.ts",
+    "format": "oxfmt --write .opencode/skills/**/*.ts",
+    "format:check": "oxfmt --check .opencode/skills/**/*.ts",
+    "prepare": "lefthook install"
   },
   "devDependencies": {
-    "typescript": "^5.4.0",
+    "@types/node": "^20.11.0",
+    "lefthook": "^2.1.3",
+    "oxfmt": "^0.36.0",
+    "oxlint": "^1.51.0",
     "tsx": "^4.7.0",
-    "@types/node": "^20.11.0"
+    "typescript": "^5.4.0"
   },
   "dependencies": {
     "dotenv": "^16.4.0"

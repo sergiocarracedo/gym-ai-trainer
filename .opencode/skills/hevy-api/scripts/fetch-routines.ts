@@ -49,15 +49,12 @@ async function fetchRoutines(): Promise<void> {
 
   try {
     while (hasMore) {
-      const response = await fetch(
-        `${API_BASE}/routines?page=${page}&pageSize=50`,
-        {
-          headers: {
-            "api-key": API_KEY,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE}/routines?page=${page}&pageSize=50`, {
+        headers: {
+          "api-key": API_KEY,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -65,7 +62,7 @@ async function fetchRoutines(): Promise<void> {
           JSON.stringify({
             error: `API request failed: ${response.status}`,
             details: errorText,
-          })
+          }),
         );
         process.exit(1);
       }
@@ -88,7 +85,7 @@ async function fetchRoutines(): Promise<void> {
       JSON.stringify({
         error: "Failed to fetch routines",
         details: error instanceof Error ? error.message : String(error),
-      })
+      }),
     );
     process.exit(1);
   }

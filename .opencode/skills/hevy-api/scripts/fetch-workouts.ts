@@ -73,15 +73,12 @@ async function fetchWorkouts(days: number, limit: number): Promise<void> {
 
   try {
     while (hasMore && allWorkouts.length < limit) {
-      const response = await fetch(
-        `${API_BASE}/workouts?page=${page}&pageSize=50`,
-        {
-          headers: {
-            "api-key": API_KEY,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE}/workouts?page=${page}&pageSize=10`, {
+        headers: {
+          "api-key": API_KEY,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -89,7 +86,7 @@ async function fetchWorkouts(days: number, limit: number): Promise<void> {
           JSON.stringify({
             error: `API request failed: ${response.status}`,
             details: errorText,
-          })
+          }),
         );
         process.exit(1);
       }
@@ -108,9 +105,7 @@ async function fetchWorkouts(days: number, limit: number): Promise<void> {
 
       // Check if oldest workout in this page is before cutoff
       if (data.workouts.length > 0) {
-        const oldestInPage = new Date(
-          data.workouts[data.workouts.length - 1].start_time
-        );
+        const oldestInPage = new Date(data.workouts[data.workouts.length - 1].start_time);
         if (oldestInPage < cutoffDate) {
           hasMore = false;
         }
@@ -128,7 +123,7 @@ async function fetchWorkouts(days: number, limit: number): Promise<void> {
       JSON.stringify({
         error: "Failed to fetch workouts",
         details: error instanceof Error ? error.message : String(error),
-      })
+      }),
     );
     process.exit(1);
   }

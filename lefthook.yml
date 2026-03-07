@@ -1,0 +1,27 @@
+# Lefthook configuration
+# https://github.com/evilmartians/lefthook
+
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: "*.{ts,tsx,js,jsx}"
+      run: npx oxlint {staged_files}
+      stage_fixed: true
+
+    format:
+      glob: "*.{ts,tsx,js,jsx}"
+      run: npx oxfmt --check {staged_files}
+
+    typecheck:
+      glob: "*.{ts,tsx}"
+      run: npm run typecheck
+
+    secrets:
+      run: bash .lefthook/check-secrets.sh
+
+# Uncomment to enable conventional commit linting:
+# commit-msg:
+#   commands:
+#     commitlint:
+#       run: npx commitlint --edit {1}

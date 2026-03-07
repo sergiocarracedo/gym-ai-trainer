@@ -117,6 +117,44 @@ To use alongside other agents, modify `opencode.json`:
 }
 ```
 
+## Development
+
+### Code Quality Tools
+
+This project uses:
+- **[oxlint](https://oxc.rs/docs/guide/usage/linter.html)**: Fast JavaScript/TypeScript linter
+- **[oxfmt](https://oxc.rs/docs/guide/usage/formatter.html)**: Fast JavaScript/TypeScript formatter  
+- **[lefthook](https://github.com/evilmartians/lefthook)**: Git hooks manager
+- **[gitleaks](https://github.com/gitleaks/gitleaks)**: Secret detection in commits
+
+### Available Scripts
+
+```bash
+# Lint TypeScript files
+npm run lint
+npm run lint:fix    # Auto-fix issues
+
+# Format TypeScript files
+npm run format       # Fix formatting
+npm run format:check # Check formatting
+
+# Type checking
+npm run typecheck
+```
+
+### Pre-commit Hooks
+
+Lefthook automatically runs on every commit:
+1. **Linting** - oxlint checks for code issues
+2. **Formatting** - oxfmt ensures consistent style
+3. **Type checking** - TypeScript compiler validates types
+4. **Secret detection** - gitleaks scans for accidentally committed secrets
+
+To skip hooks (not recommended):
+```bash
+git commit --no-verify -m "message"
+```
+
 ## License
 
 MIT

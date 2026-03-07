@@ -19,10 +19,12 @@ api-key: your-api-key-here
 Fetch user workouts with pagination.
 
 **Query Parameters:**
+
 - `page` (integer): Page number (default: 1)
-- `pageSize` (integer): Items per page (default: 10, max: 100)
+- `pageSize` (integer): Items per page (default: 10, max: 10)
 
 **Response:**
+
 ```json
 {
   "page": 1,
@@ -70,10 +72,12 @@ Fetch a specific workout by ID.
 Fetch all user routines.
 
 **Query Parameters:**
+
 - `page` (integer): Page number (default: 1)
 - `pageSize` (integer): Items per page (default: 10)
 
 **Response:**
+
 ```json
 {
   "page": 1,
@@ -112,10 +116,12 @@ Fetch all user routines.
 Fetch available exercise templates.
 
 **Query Parameters:**
+
 - `page` (integer): Page number
 - `pageSize` (integer): Items per page
 
 **Response:**
+
 ```json
 {
   "page": 1,
@@ -159,6 +165,7 @@ Fetch routine folders for organization.
 ## Muscle Groups
 
 Primary muscle groups:
+
 - chest, back, shoulders, biceps, triceps, forearms
 - core, quadriceps, hamstrings, glutes, calves, cardio, other
 
@@ -177,6 +184,7 @@ Primary muscle groups:
 ```
 
 Common status codes:
+
 - 401: Invalid or missing API key
 - 404: Resource not found
 - 429: Rate limit exceeded

@@ -48,7 +48,11 @@ function parseArgs(): { file: string } {
 
   for (const arg of args) {
     if (arg.startsWith("--file=")) {
-      file = arg.split("=").slice(1).join("=").replace(/^["']|["']$/g, "");
+      file = arg
+        .split("=")
+        .slice(1)
+        .join("=")
+        .replace(/^["']|["']$/g, "");
     }
   }
 
@@ -56,7 +60,7 @@ function parseArgs(): { file: string } {
     console.error(
       JSON.stringify({
         error: 'Missing required argument: --file="/path/to/hevy_export.csv"',
-      })
+      }),
     );
     process.exit(1);
   }
@@ -143,9 +147,7 @@ function convertToHevyFormat(rows: CsvRow[]): HevyWorkout[] {
     const workout = workoutMap.get(workoutKey)!;
 
     // Find or create exercise
-    let exercise = workout.exercises.find(
-      (e) => e.title === row.exerciseName
-    );
+    let exercise = workout.exercises.find((e) => e.title === row.exerciseName);
 
     if (!exercise) {
       exercise = {
@@ -172,18 +174,13 @@ function convertToHevyFormat(rows: CsvRow[]): HevyWorkout[] {
 
     // Append notes if this set has different notes
     if (row.notes && !exercise.notes.includes(row.notes)) {
-      exercise.notes = exercise.notes
-        ? `${exercise.notes}; ${row.notes}`
-        : row.notes;
+      exercise.notes = exercise.notes ? `${exercise.notes}; ${row.notes}` : row.notes;
     }
   }
 
   // Convert map to array and sort by date descending
   const workouts = Array.from(workoutMap.values());
-  workouts.sort(
-    (a, b) =>
-      new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
-  );
+  workouts.sort((a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime());
 
   return workouts;
 }
@@ -196,7 +193,7 @@ async function parseCsvFile(): Promise<void> {
     console.error(
       JSON.stringify({
         error: `File not found: ${filePath}`,
-      })
+      }),
     );
     process.exit(1);
   }
@@ -209,7 +206,7 @@ async function parseCsvFile(): Promise<void> {
       console.error(
         JSON.stringify({
           error: "No data found in CSV file",
-        })
+        }),
       );
       process.exit(1);
     }
@@ -226,14 +223,14 @@ async function parseCsvFile(): Promise<void> {
         message: `Parsed ${rows.length} sets from ${workouts.length} workouts`,
         outputPath,
         workouts,
-      })
+      }),
     );
   } catch (error) {
     console.error(
       JSON.stringify({
         error: "Failed to parse CSV",
         details: error instanceof Error ? error.message : String(error),
-      })
+      }),
     );
     process.exit(1);
   }

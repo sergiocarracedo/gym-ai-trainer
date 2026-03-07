@@ -59,13 +59,17 @@ function parseArgs(): { exercise: string } {
 
   for (const arg of args) {
     if (arg.startsWith("--exercise=")) {
-      exercise = arg.split("=").slice(1).join("=").replace(/^["']|["']$/g, "");
+      exercise = arg
+        .split("=")
+        .slice(1)
+        .join("=")
+        .replace(/^["']|["']$/g, "");
     }
   }
 
   if (!exercise) {
     console.error(
-      JSON.stringify({ error: 'Missing required argument: --exercise="Exercise Name"' })
+      JSON.stringify({ error: 'Missing required argument: --exercise="Exercise Name"' }),
     );
     process.exit(1);
   }
@@ -102,14 +106,12 @@ async function analyzeProgress(exerciseName: string): Promise<void> {
     console.error(
       JSON.stringify({
         error: "No workouts data found. Run fetch-workouts.ts first.",
-      })
+      }),
     );
     process.exit(1);
   }
 
-  const workouts: HevyWorkout[] = JSON.parse(
-    readFileSync(workoutsPath, "utf-8")
-  );
+  const workouts: HevyWorkout[] = JSON.parse(readFileSync(workoutsPath, "utf-8"));
 
   const exerciseSessions: ExerciseSession[] = [];
   const normalizedName = exerciseName.toLowerCase();
@@ -118,22 +120,20 @@ async function analyzeProgress(exerciseName: string): Promise<void> {
     for (const exercise of workout.exercises) {
       if (exercise.title.toLowerCase().includes(normalizedName)) {
         const workingSets = exercise.sets.filter(
-          (s) => s.type === "normal" && s.weight_kg && s.reps
+          (s) => s.type === "normal" && s.weight_kg && s.reps,
         );
 
         if (workingSets.length === 0) continue;
 
         const totalVolume = workingSets.reduce(
           (sum, s) => sum + (s.weight_kg || 0) * (s.reps || 0),
-          0
+          0,
         );
         const maxWeight = Math.max(...workingSets.map((s) => s.weight_kg || 0));
         const totalReps = workingSets.reduce((sum, s) => sum + (s.reps || 0), 0);
 
         // Find best set for 1RM estimation
-        const estimated1RMs = workingSets.map((s) =>
-          calculate1RM(s.weight_kg || 0, s.reps || 1)
-        );
+        const estimated1RMs = workingSets.map((s) => calculate1RM(s.weight_kg || 0, s.reps || 1));
         const estimated1RM = Math.max(...estimated1RMs);
 
         exerciseSessions.push({
@@ -153,15 +153,13 @@ async function analyzeProgress(exerciseName: string): Promise<void> {
       JSON.stringify({
         error: `No data found for exercise: ${exerciseName}`,
         suggestion: "Check the exercise name matches your Hevy data",
-      })
+      }),
     );
     process.exit(1);
   }
 
   // Sort by date (oldest first for trend analysis)
-  exerciseSessions.sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
+  exerciseSessions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   const volumes = exerciseSessions.map((s) => s.totalVolume);
   const weights = exerciseSessions.map((s) => s.maxWeight);
