@@ -1,0 +1,59 @@
+opencode.json
+  fa26cc36f491683d 1-18
+package.json
+  fa26cc36f491683d 1-21
+.gitignore
+  fa26cc36f491683d 1-30
+.opencode/agents/gym-ai-trainer.md
+  fa26cc36f491683d 1-138
+.opencode/skills/hevy-api/scripts/analyze-progress.ts
+  fa26cc36f491683d 1-200
+.opencode/skills/hevy-api/scripts/fetch-workouts.ts
+  fa26cc36f491683d 1-138
+.opencode/skills/hevy-api/scripts/fetch-routines.ts
+  fa26cc36f491683d 1-97
+.opencode/skills/hevy-export/SKILL.md
+  fa26cc36f491683d 1-102
+README.md
+  fa26cc36f491683d 1-122
+.env.example
+  fa26cc36f491683d 1-4
+.opencode/skills/hevy-api/references/HEVY-API.md
+  fa26cc36f491683d 1-183
+data/.gitkeep
+  fa26cc36f491683d 1-8
+.opencode/skills/hevy-api/SKILL.md
+  fa26cc36f491683d 1-94
+start.sh
+  fa26cc36f491683d 1-14
+tsconfig.json
+  fa26cc36f491683d 1-24
+.opencode/skills/hevy-api/scripts/check-goal-progress.ts
+  fa26cc36f491683d 1-249
+.opencode/skills/hevy-export/scripts/parse-csv.ts
+  fa26cc36f491683d 1-242
+docs/plans/2026-03-07-gym-ai-trainer-design.md
+  fa26cc36f491683d 1-196
+.opencode/skills/hevy-api/scripts/suggest-updates.ts
+  fa26cc36f491683d 1-224
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "aa29bad620d37bea2c19ba0141784b520692720c",
+  "prompts": {
+    "fa26cc36f491683d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3363aa28effeVBsKM9IyPPHazq",
+        "model": "anthropic/claude-opus-4-5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 2104,
+      "total_deletions": 0,
+      "accepted_lines": 2104,
+      "overriden_lines": 0
+    }
+  }
+}
