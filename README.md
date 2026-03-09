@@ -102,6 +102,14 @@ All your personal data stays local:
 - `data/` directory (profile, goals, workouts) is gitignored
 - No data is sent anywhere except to Hevy's API (for fetching your own workouts)
 
+## Legal Disclaimer
+
+- This project provides fitness guidance for informational and educational purposes only.
+- It is **not** medical advice, diagnosis, or treatment.
+- Always consult a qualified healthcare professional before making medical, rehabilitation, or significant training decisions.
+- If you feel pain, dizziness, or any concerning symptoms, stop and seek professional care.
+- AI outputs can be incorrect or incomplete; use your own judgment and professional guidance.
+
 ## Configuration
 
 The agent is configured via `opencode.json`. By default, it disables the standard `build` and `plan` agents so only the gym trainer is available.
