@@ -1,0 +1,25 @@
+README.md
+  ddfa741311195d3a 105-112
+.opencode/agents/gym-ai-trainer.md
+  ddfa741311195d3a 29-34,138-141
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "ac8f2da0b5f52116315fc86296c7542c18385e04",
+  "prompts": {
+    "ddfa741311195d3a": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "d27fe5ea-cb13-469a-9251-868bd2ff10db",
+        "model": "copilot/gpt-5.3-codex"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 37,
+      "total_deletions": 10,
+      "accepted_lines": 20,
+      "overriden_lines": 0
+    }
+  }
+}
