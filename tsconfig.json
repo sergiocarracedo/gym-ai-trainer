@@ -15,7 +15,7 @@
     "sourceMap": true
   },
   "include": [
-    ".opencode/skills/**/*.ts"
+    "agent/.opencode/skills/**/*.ts"
   ],
   "exclude": [
     "node_modules",

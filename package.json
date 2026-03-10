@@ -4,12 +4,12 @@
   "description": "AI-powered personal gym trainer using Hevy workout data",
   "type": "module",
   "scripts": {
-    "start": "opencode --agent gym-ai-trainer",
+    "start": "cd agent && ./start.sh",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint .opencode/skills/**/*.ts",
-    "lint:fix": "oxlint --fix .opencode/skills/**/*.ts",
-    "format": "oxfmt --write .opencode/skills/**/*.ts",
-    "format:check": "oxfmt --check .opencode/skills/**/*.ts",
+    "lint": "oxlint agent/.opencode/skills/**/*.ts",
+    "lint:fix": "oxlint --fix agent/.opencode/skills/**/*.ts",
+    "format": "oxfmt --write agent/.opencode/skills/**/*.ts",
+    "format:check": "oxfmt --check agent/.opencode/skills/**/*.ts",
     "prepare": "lefthook install"
   },
   "devDependencies": {

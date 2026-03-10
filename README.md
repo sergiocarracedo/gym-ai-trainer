@@ -18,6 +18,8 @@ An AI-powered personal gym trainer that analyzes your workout history from [Hevy
 
 ## Quick Start
 
+### Running Locally (Development)
+
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/ai-trainer.git
@@ -27,9 +29,23 @@ cd ai-trainer
 npm install
 
 # Start the trainer
-./start.sh
-# or
+cd agent && ./start.sh
+# or from repo root
 npm start
+```
+
+### Running in Docker
+
+```bash
+# Set up environment (see docker/.env.example)
+cp docker/.env.example docker/.env
+# Edit docker/.env with your Discord credentials
+
+# Start the container
+docker-compose -f docker/docker-compose.yml up -d
+
+# Interact via Discord bot
+# Use /opencode commands in your Discord server
 ```
 
 ## First Run
@@ -61,20 +77,35 @@ If you don't have an API key, the agent can guide you through exporting your wor
 ## Project Structure
 
 ```
-ai-trainer/
-├── .env                    # Your Hevy API key (gitignored)
-├── .opencode/
-│   ├── agents/
-│   │   └── gym-ai-trainer.md   # Agent definition
-│   └── skills/
-│       ├── hevy-api/           # API-based data access
-│       └── hevy-export/        # Browser CSV export fallback
-├── data/                   # Your personal data (gitignored)
-│   ├── user.md             # Your profile
-│   ├── goals.md            # Training goals
-│   ├── workouts.json       # Cached workout data
-│   └── conversation.md     # Session history
-└── start.sh                # Launch script
+ai-trainer/                      # Repo root (development environment)
+├── agent/                       # The gym-ai-trainer "product"
+│   ├── .opencode/
+│   │   ├── agents/
+│   │   │   └── gym-ai-trainer.md   # Agent definition
+│   │   ├── plugins/
+│   │   │   └── conversation-log.ts # Auto-logs conversations
+│   │   └── skills/
+│   │       ├── hevy-api/           # API-based data access
+│   │       └── hevy-export/        # Browser CSV export fallback
+│   ├── data/                   # Your personal data (gitignored)
+│   │   ├── user.md             # Your profile
+│   │   ├── goals.md            # Training goals
+│   │   ├── workouts.json       # Cached workout data
+│   │   └── conversation.md     # Session history
+│   ├── .env                    # Agent secrets (gitignored)
+│   ├── opencode.json           # Agent-only config
+│   └── start.sh                # Local launcher
+├── docker/                      # Docker infrastructure
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   ├── entrypoint.sh
+│   └── .env.example            # Discord bot credentials template
+├── docs/
+│   └── plans/
+├── package.json                # Dev tooling
+├── tsconfig.json
+├── lefthook.yml
+└── README.md
 ```
 
 ## What the Agent Does
@@ -95,11 +126,19 @@ ai-trainer/
 - Motivates you when ahead, suggests adjustments when behind
 - Celebrates achievements
 
+## Two OpenCode Environments
+
+This project uses two separate OpenCode configurations:
+
+1. **Development Environment** (repo root): Use your preferred coding assistant (OpenCode, Claude Code, etc.) to develop and iterate on the agent code. No restrictions.
+
+2. **Production Agent** (`agent/`): The locked-down gym trainer that only runs the gym-ai-trainer agent with specific skills. This is what runs in Docker.
+
 ## Privacy
 
 All your personal data stays local:
-- `.env` (API key) is gitignored
-- `data/` directory (profile, goals, workouts) is gitignored
+- `agent/.env` (API key) is gitignored
+- `agent/data/` directory (profile, goals, workouts) is gitignored
 - No data is sent anywhere except to Hevy's API (for fetching your own workouts)
 
 ## Legal Disclaimer
@@ -110,20 +149,17 @@ All your personal data stays local:
 - If you feel pain, dizziness, or any concerning symptoms, stop and seek professional care.
 - AI outputs can be incorrect or incomplete; use your own judgment and professional guidance.
 
-## Configuration
+## Running via Discord (Docker)
 
-The agent is configured via `opencode.json`. By default, it disables the standard `build` and `plan` agents so only the gym trainer is available.
+The Docker setup integrates [remote-opencode](https://github.com/RoundTable02/remote-opencode), enabling Discord bot control:
 
-To use alongside other agents, modify `opencode.json`:
+1. Set up Discord credentials in `docker/.env` (see `docker/.env.example`)
+2. Start the container: `docker-compose -f docker/docker-compose.yml up -d`
+3. Use Discord slash commands to interact:
+   - `/opencode prompt:Analyze my last workout`
+   - `/setpath`, `/use`, `/projects`, etc.
 
-```json
-{
-  "agent": {
-    "build": { "disable": false },
-    "plan": { "disable": false }
-  }
-}
-```
+The agent's `.env` (with `HEVY_API_KEY`) and `data/` are bind-mounted, so the agent can read/write them as needed.
 
 ## Development
 
