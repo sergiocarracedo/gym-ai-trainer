@@ -1,0 +1,50 @@
+tsconfig.json
+  a2d1cf2ce0e30a09 18
+docker/Dockerfile
+  a2d1cf2ce0e30a09 1-17
+docker/entrypoint.sh
+  a2d1cf2ce0e30a09 1-76
+.gitignore
+  a2d1cf2ce0e30a09 13-18
+docker/docker-compose.yml
+  a2d1cf2ce0e30a09 1-26
+package.json
+  a2d1cf2ce0e30a09 7,9-12
+docker/.env.example
+  a2d1cf2ce0e30a09 1-20
+README.md
+  a2d1cf2ce0e30a09 21-22,32-33,37-48,80-108,129-136,140-141,152,154,156-160,162
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "725dd726c6dd5e988e5d77d1647ab58e181561b2",
+  "prompts": {
+    "0b03bf48f69f6cd9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_32ba9bf79ffe2x0PSlu7fosLoJ",
+        "model": "anthropic/claude-opus-4-5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 6,
+      "overriden_lines": 0
+    },
+    "a2d1cf2ce0e30a09": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3264424caffetFy5MPJfdWOU1W",
+        "model": "anthropic/claude-opus-4-6"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 229,
+      "total_deletions": 52,
+      "accepted_lines": 216,
+      "overriden_lines": 0
+    }
+  }
+}
