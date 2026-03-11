@@ -1,0 +1,23 @@
+.gitignore
+  a2d1cf2ce0e30a09 20-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "2b52548c694c9302ff7762168d86484712f6e4c1",
+  "prompts": {
+    "a2d1cf2ce0e30a09": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3264424caffetFy5MPJfdWOU1W",
+        "model": "anthropic/claude-opus-4-6"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 3,
+      "total_deletions": 0,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    }
+  }
+}
