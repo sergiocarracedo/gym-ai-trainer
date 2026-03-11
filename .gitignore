@@ -17,6 +17,9 @@ agent/data/*
 # Agent secrets (bind-mounted at runtime)
 agent/.env
 
+# Docker secrets
+docker/.env
+
 # OS files
 .DS_Store
 Thumbs.db
