@@ -101,6 +101,28 @@ function waitForServer(retries = 30) {
 
 let currentSessionID = null;
 
+async function getConfig() {
+  return new Promise((resolve, reject) => {
+    http
+      .get(`http://127.0.0.1:${OPENCODE_PORT}/config`, (res) => {
+        let responseData = "";
+        res.on("data", (chunk) => (responseData += chunk));
+        res.on("end", () => {
+          if (res.statusCode === 200) {
+            try {
+              resolve(JSON.parse(responseData));
+            } catch (e) {
+              reject(new Error(`Failed to parse config: ${e.message}`));
+            }
+          } else {
+            reject(new Error(`Failed to get config: ${res.statusCode}`));
+          }
+        });
+      })
+      .on("error", reject);
+  });
+}
+
 async function ensureSession() {
   if (currentSessionID) return currentSessionID;
 
@@ -147,6 +169,13 @@ async function ensureSession() {
   });
 }
 
+function resetSession() {
+  const oldSession = currentSessionID;
+  currentSessionID = null;
+  console.log(`[OpenCode] Session reset (was: ${oldSession})`);
+  return oldSession;
+}
+
 async function sendToOpenCode(prompt) {
   return new Promise((resolve, reject) => {
     ensureSession()
@@ -162,7 +191,7 @@ async function sendToOpenCode(prompt) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Content-Length": data.length,
+            "Content-Length": Buffer.byteLength(data),
           },
         };
 
@@ -177,14 +206,17 @@ async function sendToOpenCode(prompt) {
             if (res.statusCode === 200) {
               try {
                 const parsed = JSON.parse(responseData);
-                // Extract text from response parts
-                const textParts = parsed.parts
+                const thinking = parsed.parts
+                  .filter((p) => p.type === "thinking")
+                  .map((p) => p.text || p.thinking || "")
+                  .join("\n\n");
+                const text = parsed.parts
                   .filter((p) => p.type === "text")
                   .map((p) => p.text)
                   .join("\n\n");
-                resolve(textParts || "No response");
+                resolve({ thinking, text: text || "No response" });
               } catch {
-                resolve(responseData);
+                resolve({ thinking: "", text: responseData });
               }
             } else {
               reject(new Error(`OpenCode API returned status ${res.statusCode}: ${responseData}`));
@@ -252,27 +284,94 @@ client.on("messageCreate", async (message) => {
   if (!prompt) return;
 
   try {
-    // React to show we're processing
-    await message.react("⏳");
+    // Handle commands
+    if (prompt.startsWith("/")) {
+      const [command] = prompt.slice(1).split(/\s+/);
+
+      switch (command.toLowerCase()) {
+        case "info":
+        case "status": {
+          await message.react("📊");
+          const config = await getConfig();
+          const info = [
+            "**OpenCode Status**",
+            `• Session: \`${currentSessionID || "none"}\``,
+            `• Agent: \`${config.agent || "gym-ai-trainer"}\``,
+            `• Model: \`${config.model || "unknown"}\``,
+            `• Provider: \`${config.provider || "unknown"}\``,
+          ].join("\n");
+          await message.reply(info);
+          return;
+        }
+
+        case "reset": {
+          await message.react("🔄");
+          const oldSession = resetSession();
+          await message.reply(
+            `✅ Session reset (was: \`${oldSession || "none"}\`). New session will be created on next message.`,
+          );
+          return;
+        }
+
+        case "help": {
+          await message.react("❓");
+          const help = [
+            "**Available Commands**",
+            "`/info` or `/status` - Show current session and config",
+            "`/reset` - Reset the current session",
+            "`/help` - Show this help message",
+            "",
+            "Any other message is sent directly to the AI agent.",
+          ].join("\n");
+          await message.reply(help);
+          return;
+        }
+
+        default:
+          // Unknown command - send as regular message to agent
+          break;
+      }
+    }
+
+    // Start typing indicator (expires after 10s, so repeat every 8s)
+    const typingInterval = setInterval(() => {
+      message.channel.sendTyping().catch(() => {});
+    }, 8000);
+    message.channel.sendTyping().catch(() => {});
 
     console.log(`[${message.author.tag}] ${prompt}`);
 
     // Send to OpenCode API
-    const response = await sendToOpenCode(prompt);
+    const { thinking, text } = await sendToOpenCode(prompt);
 
-    console.log(`[Bot] Received ${response.length} chars`);
+    // Stop typing indicator
+    clearInterval(typingInterval);
 
-    // Remove processing reaction
-    await message.reactions.cache.get("⏳")?.users.remove(client.user.id);
+    console.log(`[Bot] Received ${text.length} chars text, ${thinking.length} chars thinking`);
 
-    // Send response (split if too long)
-    const chunks = response.match(/[\s\S]{1,1900}/g) || ["No output"];
+    // Create thread for thinking if present
+    if (thinking && thinking.trim()) {
+      try {
+        const thread = await message.startThread({
+          name: `💭 Thinking`,
+          autoArchiveDuration: 60,
+        });
+        const thinkingChunks = thinking.match(/[\s\S]{1,1900}/g) || [thinking];
+        for (const chunk of thinkingChunks) {
+          await thread.send(`**Thinking:**\n${chunk}`);
+        }
+      } catch (e) {
+        console.error("Failed to create thinking thread:", e.message);
+      }
+    }
+
+    // Send main response (split if too long)
+    const chunks = text.match(/[\s\S]{1,1900}/g) || ["No output"];
     for (const chunk of chunks) {
       await message.reply(chunk);
     }
   } catch (error) {
     console.error("Error processing message:", error);
-    await message.reactions.cache.get("⏳")?.users.remove(client.user.id);
     await message.reply(`❌ Error: ${error.message}`);
   }
 });
