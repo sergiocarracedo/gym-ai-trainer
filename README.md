@@ -48,6 +48,33 @@ docker-compose -f docker/docker-compose.yml up -d
 # Use /opencode commands in your Discord server
 ```
 
+### Running as Home Assistant Addon
+
+The easiest way to run Gym AI Trainer 24/7 is as a Home Assistant addon:
+
+1. **Add the repository** to Home Assistant:
+   - Go to Settings → Add-ons → Add-on Store → ⋮ (top right) → Repositories
+   - Add: `https://github.com/sergiocarracedo/gym-ai-trainer`
+
+2. **Install the addon**:
+   - Find "Gym AI Trainer" in the Add-on Store
+   - Click Install
+
+3. **Configure**:
+   - **Discord Bot Setup** (see [Discord Bot Setup](#discord-bot-setup) below):
+     - Bot Token
+     - Application ID  
+     - Server ID
+     - Channel ID
+     - Allowed User IDs (optional)
+   - **API Keys**:
+     - Anthropic API Key (get from [console.anthropic.com](https://console.anthropic.com/settings/keys))
+     - Hevy API Key (from Hevy app settings)
+
+4. **Start the addon** and interact via Discord
+
+Your profile, goals, and workout data are automatically backed up with Home Assistant snapshots.
+
 ## First Run
 
 On your first session, the agent will:
@@ -95,14 +122,26 @@ ai-trainer/                      # Repo root (development environment)
 │   ├── .env                    # Agent secrets (gitignored)
 │   ├── opencode.json           # Agent-only config
 │   └── start.sh                # Local launcher
-├── docker/                      # Docker infrastructure
+├── base/                        # Git submodule: agents-ha-base
+│   ├── simple-bot.js           # Discord bot with slash commands
+│   ├── entrypoint.sh           # HA + standalone mode detection
+│   ├── ha-addon/               # Shared HA addon components
+│   └── scripts/                # Build utilities
+├── docker/                      # Standalone Docker infrastructure
 │   ├── Dockerfile
 │   ├── docker-compose.yml
 │   ├── entrypoint.sh
 │   └── .env.example            # Discord bot credentials template
+├── gym-ai-trainer/              # Home Assistant addon files
+│   ├── config.yaml             # Generated (base + agent config merged)
+│   ├── config.agent.yaml       # Agent-specific HA config
+│   ├── Dockerfile              # HA addon build instructions
+│   ├── build.yaml              # Architecture support
+│   └── translations/           # UI translations
 ├── docs/
 │   └── plans/
-├── package.json                # Dev tooling
+├── repository.json              # HA addon repository metadata
+├── package.json                # Dev tooling + HA build script
 ├── tsconfig.json
 ├── lefthook.yml
 └── README.md
@@ -148,6 +187,32 @@ All your personal data stays local:
 - Always consult a qualified healthcare professional before making medical, rehabilitation, or significant training decisions.
 - If you feel pain, dizziness, or any concerning symptoms, stop and seek professional care.
 - AI outputs can be incorrect or incomplete; use your own judgment and professional guidance.
+
+## Discord Bot Setup
+
+To use the Discord bot interface (required for Docker and Home Assistant deployments):
+
+1. **Create a Discord Application**:
+   - Go to [Discord Developer Portal](https://discord.com/developers/applications)
+   - Click "New Application" and give it a name (e.g., "Gym AI Trainer")
+   - Copy the **Application ID** from General Information
+
+2. **Create a Bot**:
+   - Go to Bot tab → "Reset Token" → Copy the **Bot Token**
+   - Enable these Privileged Gateway Intents:
+     - Server Members Intent
+     - Message Content Intent
+
+3. **Invite to Server**:
+   - Go to OAuth2 → URL Generator
+   - Select scopes: `bot`, `applications.commands`
+   - Select permissions: `Send Messages`, `Read Message History`, `Use Slash Commands`, `Manage Threads`
+   - Copy the generated URL and open it in your browser to invite the bot
+
+4. **Get IDs** (enable Developer Mode in Discord Settings → Advanced):
+   - Right-click your server icon → Copy Server ID (**Server ID**)
+   - Right-click the channel where bot should listen → Copy Channel ID (**Channel ID**)
+   - (Optional) Right-click users → Copy User ID (**Allowed User IDs**)
 
 ## Running via Discord (Docker)
 
