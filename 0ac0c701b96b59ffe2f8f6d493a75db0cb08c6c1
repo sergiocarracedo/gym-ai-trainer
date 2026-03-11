@@ -1,0 +1,23 @@
+docker/entrypoint.sh
+  a2d1cf2ce0e30a09 23-33,35-37,39-41,43-45,47-51,53-54,57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "0ac0c701b96b59ffe2f8f6d493a75db0cb08c6c1",
+  "prompts": {
+    "a2d1cf2ce0e30a09": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3264424caffetFy5MPJfdWOU1W",
+        "model": "anthropic/claude-opus-4-6"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 35,
+      "total_deletions": 39,
+      "accepted_lines": 30,
+      "overriden_lines": 0
+    }
+  }
+}
