@@ -53,17 +53,29 @@ fi
 echo "Config contents:"
 cat ~/.remote-opencode/config.json
 
-# Create data.json with project path
-cat > ~/.remote-opencode/data.json << 'EOF'
-{
-  "projects": [
-    { "alias": "gym-ai-trainer", "path": "/app" }
+# Create data.json with project path and optional channel binding
+node -e "
+const fs = require('fs');
+const data = {
+  projects: [
+    { alias: 'gym-ai-trainer', path: '/app' }
   ],
-  "bindings": [],
-  "threadSessions": [],
-  "worktreeMappings": []
+  bindings: [],
+  threadSessions: [],
+  worktreeMappings: []
+};
+
+// If DISCORD_CHANNEL_ID is provided, automatically bind it
+if (process.env.DISCORD_CHANNEL_ID) {
+  data.bindings.push({
+    channelId: process.env.DISCORD_CHANNEL_ID,
+    projectAlias: 'gym-ai-trainer'
+  });
+  console.log('Auto-binding channel ' + process.env.DISCORD_CHANNEL_ID + ' to gym-ai-trainer project');
 }
-EOF
+
+fs.writeFileSync(process.env.HOME + '/.remote-opencode/data.json', JSON.stringify(data, null, 2));
+"
 
 echo "Configured gym-ai-trainer project"
 
