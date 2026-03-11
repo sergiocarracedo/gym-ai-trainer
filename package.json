@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "cd agent && ./start.sh",
-    "build:ha": "node base/scripts/merge-ha-config.cjs",
+    "build:ha": "ADDON_DIR=gym-ai-trainer node base/scripts/merge-ha-config.cjs",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint agent/.opencode/skills/**/*.ts",
     "lint:fix": "oxlint --fix agent/.opencode/skills/**/*.ts",
