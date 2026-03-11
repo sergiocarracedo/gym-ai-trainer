@@ -2,11 +2,13 @@
 /**
  * Simple Discord bot that forwards all messages in a channel to OpenCode
  * No threads, no slash commands - just direct message passthrough
+ * Uses OpenCode server mode with HTTP API
  */
 
 const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
+const http = require("http");
 
 // Try to require discord.js from remote-opencode's node_modules
 let Client, GatewayIntentBits;
@@ -30,6 +32,7 @@ const config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
 
 const CHANNEL_ID = process.env.DISCORD_CHANNEL_ID;
 const PROJECT_PATH = "/app";
+const OPENCODE_PORT = 3000;
 
 if (!CHANNEL_ID) {
   console.error("Error: DISCORD_CHANNEL_ID environment variable not set");
@@ -42,41 +45,132 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
   ],
+  partials: [],
 });
 
-function startOpenCode(prompt) {
+// Start OpenCode server
+console.log("Starting OpenCode server...");
+const opencodeServer = spawn("opencode", ["serve", "--port", OPENCODE_PORT.toString()], {
+  cwd: PROJECT_PATH,
+  env: { ...process.env, OPENCODE_AGENT: "gym-ai-trainer" },
+  stdio: ["ignore", "pipe", "pipe"],
+});
+
+opencodeServer.stdout.on("data", (data) => {
+  console.log(`[OpenCode] ${data.toString().trim()}`);
+});
+
+opencodeServer.stderr.on("data", (data) => {
+  console.error(`[OpenCode Error] ${data.toString().trim()}`);
+});
+
+opencodeServer.on("close", (code) => {
+  console.error(`OpenCode server exited with code ${code}`);
+  process.exit(1);
+});
+
+// Wait for server to be ready
+function waitForServer(retries = 30) {
   return new Promise((resolve, reject) => {
-    const proc = spawn("opencode", ["run", "--agent", "gym-ai-trainer", prompt], {
-      cwd: PROJECT_PATH,
-      env: { ...process.env },
-      stdio: ["pipe", "pipe", "pipe"],
-    });
-
-    let output = "";
-    let errorOutput = "";
-
-    proc.stdout.on("data", (data) => {
-      output += data.toString();
-    });
-
-    proc.stderr.on("data", (data) => {
-      errorOutput += data.toString();
-    });
-
-    proc.on("close", (code) => {
-      if (code === 0) {
-        resolve(output);
-      } else {
-        reject(new Error(`OpenCode exited with code ${code}: ${errorOutput}`));
-      }
-    });
+    const check = () => {
+      http
+        .get(`http://127.0.0.1:${OPENCODE_PORT}/health`, (res) => {
+          if (res.statusCode === 200) {
+            resolve();
+          } else {
+            if (retries > 0) {
+              setTimeout(() => check(), 1000);
+              retries--;
+            } else {
+              reject(new Error("OpenCode server did not become ready"));
+            }
+          }
+        })
+        .on("error", () => {
+          if (retries > 0) {
+            setTimeout(() => check(), 1000);
+            retries--;
+          } else {
+            reject(new Error("OpenCode server did not become ready"));
+          }
+        });
+    };
+    check();
   });
 }
 
-client.once("ready", () => {
+function sendToOpenCode(prompt) {
+  return new Promise((resolve, reject) => {
+    const data = JSON.stringify({ message: prompt });
+
+    const options = {
+      hostname: "127.0.0.1",
+      port: OPENCODE_PORT,
+      path: "/api/chat",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": data.length,
+      },
+    };
+
+    const req = http.request(options, (res) => {
+      let responseData = "";
+
+      res.on("data", (chunk) => {
+        responseData += chunk;
+      });
+
+      res.on("end", () => {
+        if (res.statusCode === 200) {
+          try {
+            const parsed = JSON.parse(responseData);
+            resolve(parsed.response || responseData);
+          } catch {
+            resolve(responseData);
+          }
+        } else {
+          reject(new Error(`OpenCode API returned status ${res.statusCode}: ${responseData}`));
+        }
+      });
+    });
+
+    req.on("error", (error) => {
+      reject(error);
+    });
+
+    req.write(data);
+    req.end();
+  });
+}
+
+client.once("ready", async () => {
   console.log(`✓ Simple bot ready! Logged in as ${client.user.tag}`);
   console.log(`✓ Listening to channel ${CHANNEL_ID}`);
   console.log(`✓ Project path: ${PROJECT_PATH}`);
+  console.log(`✓ Guild count: ${client.guilds.cache.size}`);
+
+  // Wait for OpenCode server
+  try {
+    console.log("Waiting for OpenCode server to be ready...");
+    await waitForServer();
+    console.log("✓ OpenCode server ready!");
+  } catch (error) {
+    console.error("✗ OpenCode server failed to start:", error.message);
+    process.exit(1);
+  }
+
+  // Try to fetch the channel
+  try {
+    const channel = await client.channels.fetch(CHANNEL_ID);
+    console.log(`✓ Channel found: #${channel.name} (type: ${channel.type})`);
+  } catch (error) {
+    console.error(`✗ Failed to fetch channel ${CHANNEL_ID}:`, error.message);
+  }
+});
+
+client.on("error", (error) => {
+  console.error("Discord client error:", error);
 });
 
 client.on("messageCreate", async (message) => {
@@ -102,8 +196,10 @@ client.on("messageCreate", async (message) => {
 
     console.log(`[${message.author.tag}] ${prompt}`);
 
-    // Run OpenCode with the prompt
-    const response = await startOpenCode(prompt);
+    // Send to OpenCode API
+    const response = await sendToOpenCode(prompt);
+
+    console.log(`[Bot] Received ${response.length} chars`);
 
     // Remove processing reaction
     await message.reactions.cache.get("⏳")?.users.remove(client.user.id);
@@ -113,8 +209,6 @@ client.on("messageCreate", async (message) => {
     for (const chunk of chunks) {
       await message.reply(chunk);
     }
-
-    console.log(`[Bot] Responded with ${response.length} chars`);
   } catch (error) {
     console.error("Error processing message:", error);
     await message.reactions.cache.get("⏳")?.users.remove(client.user.id);
