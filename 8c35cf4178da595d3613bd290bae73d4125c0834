@@ -1,0 +1,25 @@
+gym-ai-trainer/build.yaml
+  a2d1cf2ce0e30a09 2-3
+gym-ai-trainer/config.agent.yaml
+  a2d1cf2ce0e30a09 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.10",
+  "base_commit_sha": "8c35cf4178da595d3613bd290bae73d4125c0834",
+  "prompts": {
+    "a2d1cf2ce0e30a09": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3264424caffetFy5MPJfdWOU1W",
+        "model": "anthropic/claude-opus-4-6"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 3,
+      "total_deletions": 3,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    }
+  }
+}
