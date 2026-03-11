@@ -99,18 +99,19 @@ function waitForServer(retries = 30) {
   });
 }
 
-function sendToOpenCode(prompt) {
-  return new Promise((resolve, reject) => {
-    const data = JSON.stringify({ message: prompt });
+let currentSessionID = null;
 
+async function ensureSession() {
+  if (currentSessionID) return currentSessionID;
+
+  return new Promise((resolve, reject) => {
     const options = {
       hostname: "127.0.0.1",
       port: OPENCODE_PORT,
-      path: "/api/chat",
+      path: "/session",
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Content-Length": data.length,
       },
     };
 
@@ -125,12 +126,14 @@ function sendToOpenCode(prompt) {
         if (res.statusCode === 200) {
           try {
             const parsed = JSON.parse(responseData);
-            resolve(parsed.response || responseData);
-          } catch {
-            resolve(responseData);
+            currentSessionID = parsed.id;
+            console.log(`[OpenCode] Created session: ${currentSessionID}`);
+            resolve(currentSessionID);
+          } catch (e) {
+            reject(new Error(`Failed to parse session response: ${e.message}`));
           }
         } else {
-          reject(new Error(`OpenCode API returned status ${res.statusCode}: ${responseData}`));
+          reject(new Error(`Failed to create session: ${res.statusCode}`));
         }
       });
     });
@@ -139,8 +142,66 @@ function sendToOpenCode(prompt) {
       reject(error);
     });
 
-    req.write(data);
+    req.write(JSON.stringify({}));
     req.end();
+  });
+}
+
+async function sendToOpenCode(prompt) {
+  return new Promise((resolve, reject) => {
+    ensureSession()
+      .then((sessionID) => {
+        const data = JSON.stringify({
+          parts: [{ type: "text", text: prompt }],
+        });
+
+        const options = {
+          hostname: "127.0.0.1",
+          port: OPENCODE_PORT,
+          path: `/session/${sessionID}/message`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Content-Length": data.length,
+          },
+        };
+
+        const req = http.request(options, (res) => {
+          let responseData = "";
+
+          res.on("data", (chunk) => {
+            responseData += chunk;
+          });
+
+          res.on("end", () => {
+            if (res.statusCode === 200) {
+              try {
+                const parsed = JSON.parse(responseData);
+                // Extract text from response parts
+                const textParts = parsed.parts
+                  .filter((p) => p.type === "text")
+                  .map((p) => p.text)
+                  .join("\n\n");
+                resolve(textParts || "No response");
+              } catch {
+                resolve(responseData);
+              }
+            } else {
+              reject(new Error(`OpenCode API returned status ${res.statusCode}: ${responseData}`));
+            }
+          });
+        });
+
+        req.on("error", (error) => {
+          reject(error);
+        });
+
+        req.write(data);
+        req.end();
+      })
+      .catch((error) => {
+        reject(error);
+      });
   });
 }
 
