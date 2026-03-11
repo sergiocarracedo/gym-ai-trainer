@@ -9,8 +9,9 @@ WORKDIR /app
 # Copy agent files
 COPY agent/ .
 
-# Copy entrypoint script
+# Copy Docker scripts
 COPY docker/entrypoint.sh /entrypoint.sh
+COPY docker/simple-bot.js /simple-bot.js
 RUN chmod +x /entrypoint.sh
 
 # Run entrypoint

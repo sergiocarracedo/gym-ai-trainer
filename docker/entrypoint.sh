@@ -21,7 +21,6 @@ echo "All required environment variables are set"
 mkdir -p ~/.remote-opencode
 
 # Build JSON config using node for proper formatting
-# Note: remote-opencode expects config in { bot: { discordToken, clientId, guildId } } format
 node -e "
 const fs = require('fs');
 const config = {
@@ -53,32 +52,57 @@ fi
 echo "Config contents:"
 cat ~/.remote-opencode/config.json
 
-# Create data.json with project path and optional channel binding
-node -e "
-const fs = require('fs');
-const data = {
-  projects: [
-    { alias: 'gym-ai-trainer', path: '/app' }
-  ],
-  bindings: [],
-  threadSessions: [],
-  worktreeMappings: []
-};
+# Check bot mode
+BOT_MODE=${BOT_MODE:-remote-opencode}
 
-// If DISCORD_CHANNEL_ID is provided, automatically bind it
-if (process.env.DISCORD_CHANNEL_ID) {
-  data.bindings.push({
-    channelId: process.env.DISCORD_CHANNEL_ID,
-    projectAlias: 'gym-ai-trainer'
-  });
-  console.log('Auto-binding channel ' + process.env.DISCORD_CHANNEL_ID + ' to gym-ai-trainer project');
-}
-
-fs.writeFileSync(process.env.HOME + '/.remote-opencode/data.json', JSON.stringify(data, null, 2));
-"
-
-echo "Configured gym-ai-trainer project"
-
-# Start the Discord bot
-echo "Starting remote-opencode Discord bot..."
-exec remote-opencode start
+if [ "$BOT_MODE" = "simple" ]; then
+    # Simple mode: direct message passthrough, no threads
+    if [ -z "$DISCORD_CHANNEL_ID" ]; then
+        echo "Error: DISCORD_CHANNEL_ID required for simple mode"
+        exit 1
+    fi
+    
+    echo "Using simple bot mode (direct message passthrough, no threads)"
+    echo "Channel: $DISCORD_CHANNEL_ID"
+    
+    # Install discord.js
+    echo "Installing discord.js..."
+    cd /tmp && npm install --silent discord.js > /dev/null 2>&1
+    
+    # Start simple bot
+    echo "Starting simple Discord bot..."
+    exec node /simple-bot.js
+else
+    # Remote-opencode mode: slash commands with threads
+    echo "Using remote-opencode mode (slash commands, threads)"
+    
+    # Create data.json with project path and optional channel binding
+    node -e "
+    const fs = require('fs');
+    const data = {
+      projects: [
+        { alias: 'gym-ai-trainer', path: '/app' }
+      ],
+      bindings: [],
+      threadSessions: [],
+      worktreeMappings: []
+    };
+    
+    // If DISCORD_CHANNEL_ID is provided, automatically bind it
+    if (process.env.DISCORD_CHANNEL_ID) {
+      data.bindings.push({
+        channelId: process.env.DISCORD_CHANNEL_ID,
+        projectAlias: 'gym-ai-trainer'
+      });
+      console.log('Auto-binding channel ' + process.env.DISCORD_CHANNEL_ID + ' to gym-ai-trainer project');
+    }
+    
+    fs.writeFileSync(process.env.HOME + '/.remote-opencode/data.json', JSON.stringify(data, null, 2));
+    "
+    
+    echo "Configured gym-ai-trainer project"
+    
+    # Start remote-opencode bot
+    echo "Starting remote-opencode Discord bot..."
+    exec remote-opencode start
+fi

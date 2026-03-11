@@ -12,6 +12,8 @@ services:
       - DISCORD_GUILD_ID=${DISCORD_GUILD_ID}
       # Optional: Channel ID to auto-bind to gym-ai-trainer project
       - DISCORD_CHANNEL_ID=${DISCORD_CHANNEL_ID:-}
+      # Bot mode: "remote-opencode" (slash commands, threads) or "simple" (direct messages, no threads)
+      - BOT_MODE=${BOT_MODE:-remote-opencode}
       # Optional: restrict access to specific Discord user IDs (comma-separated)
       - DISCORD_ALLOWED_USER_IDS=${DISCORD_ALLOWED_USER_IDS:-}
       # Optional: OpenAI API key for voice transcription
