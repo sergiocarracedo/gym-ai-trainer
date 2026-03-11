@@ -1,0 +1,23 @@
+docker/simple-bot.js
+  a2d1cf2ce0e30a09 102,104-105,107,111,129-133,136,145,150-153,157,160,162-163,168,171,175,177-186,188-189,193-194,197-198,203-204
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.10",
+  "base_commit_sha": "2ef05128c97bc3cf196c3a5eec6882a00c48a753",
+  "prompts": {
+    "a2d1cf2ce0e30a09": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3264424caffetFy5MPJfdWOU1W",
+        "model": "anthropic/claude-opus-4-6"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 78,
+      "total_deletions": 16,
+      "accepted_lines": 45,
+      "overriden_lines": 20
+    }
+  }
+}
