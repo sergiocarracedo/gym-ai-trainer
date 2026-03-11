@@ -46,7 +46,7 @@ const client = new Client({
 
 function startOpenCode(prompt) {
   return new Promise((resolve, reject) => {
-    const proc = spawn("opencode", ["--agent", "gym-ai-trainer"], {
+    const proc = spawn("opencode", ["run", "--agent", "gym-ai-trainer", prompt], {
       cwd: PROJECT_PATH,
       env: { ...process.env },
       stdio: ["pipe", "pipe", "pipe"],
@@ -70,10 +70,6 @@ function startOpenCode(prompt) {
         reject(new Error(`OpenCode exited with code ${code}: ${errorOutput}`));
       }
     });
-
-    // Send the prompt
-    proc.stdin.write(prompt + "\n");
-    proc.stdin.end();
   });
 }
 
