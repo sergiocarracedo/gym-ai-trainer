@@ -5,26 +5,9 @@ services:
       dockerfile: docker/Dockerfile
     container_name: gym-ai-trainer
     restart: unless-stopped
-    environment:
-      # Discord bot credentials (required)
-      - DISCORD_TOKEN=${DISCORD_TOKEN}
-      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
-      - DISCORD_GUILD_ID=${DISCORD_GUILD_ID}
-      # Optional: Channel ID to auto-bind to gym-ai-trainer project
-      - DISCORD_CHANNEL_ID=${DISCORD_CHANNEL_ID:-}
-      # Bot mode: "remote-opencode" (slash commands, threads) or "simple" (direct messages, no threads)
-      - BOT_MODE=${BOT_MODE:-remote-opencode}
-      # Optional: restrict access to specific Discord user IDs (comma-separated)
-      - DISCORD_ALLOWED_USER_IDS=${DISCORD_ALLOWED_USER_IDS:-}
-      # Optional: OpenAI API key for voice transcription
-      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    env_file: .env
     volumes:
       # Bind-mount agent data directory for persistence
       - ../agent/data:/app/data
       # Bind-mount agent .env file (HEVY_API_KEY, LLM provider keys)
-      - ../agent/.env:/app/.env
-      # Named volume for remote-opencode internal state
-      - remote-opencode-config:/root/.remote-opencode
-
-volumes:
-  remote-opencode-config:
+      - ../agent/.env:/app/.env:ro
