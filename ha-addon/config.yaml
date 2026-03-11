@@ -1,0 +1,28 @@
+name: Gym AI Trainer
+description: AI personal trainer powered by OpenCode with Discord bot interface.
+  Analyzes your Hevy workout data and provides personalized training guidance.
+version: 1.0.0
+slug: gym_ai_trainer
+url: https://github.com/sergiocarracedo/gym-ai-trainer
+arch:
+  - aarch64
+  - amd64
+startup: services
+boot: auto
+options:
+  bot_token: ""
+  app_id: ""
+  server_id: ""
+  channel_id: ""
+  allowed_user_ids: []
+  anthropic_api_key: ""
+  hevy_api_key: ""
+schema:
+  bot_token: password
+  app_id: str
+  server_id: str
+  channel_id: str
+  allowed_user_ids:
+    - str
+  anthropic_api_key: password
+  hevy_api_key: password

@@ -1,0 +1,11 @@
+configuration:
+  anthropic_api_key:
+    name: Anthropic API Key
+    description: >-
+      Get your API key from https://console.anthropic.com/settings/keys.
+      Required for the AI agent to generate personalized training advice.
+  hevy_api_key:
+    name: Hevy API Key
+    description: >-
+      Get your API key from the Hevy app settings.
+      Used to fetch your workout history and analyze your progress.

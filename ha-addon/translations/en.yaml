@@ -1,0 +1,28 @@
+configuration:
+  bot_token:
+    name: Discord Bot Token
+    description: Go to https://discord.com/developers/applications → Select your app
+      → Bot → Reset Token → Copy the token
+  app_id:
+    name: Discord Application ID
+    description: Go to https://discord.com/developers/applications → Select your app
+      → General Information → Application ID
+  server_id:
+    name: Discord Server ID
+    description: Enable Developer Mode in Discord (Settings → Advanced → Developer
+      Mode). Right-click your server icon → Copy Server ID
+  channel_id:
+    name: Discord Channel ID
+    description: Right-click the channel where the bot should listen → Copy Channel ID
+  allowed_user_ids:
+    name: Allowed Discord User IDs
+    description: Optional. Right-click a user → Copy User ID. Leave empty to allow
+      all users.
+  anthropic_api_key:
+    name: Anthropic API Key
+    description: Get your API key from https://console.anthropic.com/settings/keys.
+      Required for the AI agent to generate personalized training advice.
+  hevy_api_key:
+    name: Hevy API Key
+    description: Get your API key from the Hevy app settings. Used to fetch your
+      workout history and analyze your progress.
