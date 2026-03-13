@@ -1,0 +1,21 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.12",
+  "base_commit_sha": "6050f6fcacb285109f63aa55ed1bcb7f0b4bdeaa",
+  "prompts": {
+    "9b449692b59653fc": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_31e4cb365ffevtgvuqiVVQNtdX",
+        "model": "github-copilot/gpt-5.3-codex"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 18,
+      "total_deletions": 7,
+      "accepted_lines": 12,
+      "overriden_lines": 0
+    }
+  }
+}
