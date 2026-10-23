@@ -4,7 +4,7 @@
   "description": "AI-powered personal gym trainer using Hevy workout data",
   "type": "module",
   "scripts": {
-    "start": "opencode --agent gym-ai-trainer",
+    "start": "opencode",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint .opencode/skills/**/*.ts",
     "lint:fix": "oxlint --fix .opencode/skills/**/*.ts",

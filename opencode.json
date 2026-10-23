@@ -1,18 +1,24 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "default_agent": "gym-ai-trainer",
-  "agent": {
+  "agents": {
     "build": {
-      "disable": true
+      "disabled": true
     },
     "plan": {
-      "disable": true
+      "disabled": true
     }
   },
-  "permission": {
-    "skill": {
-      "hevy-api": "allow",
-      "hevy-export": "allow"
+  "permissions": [
+    {
+      "action": "skill",
+      "resource": "hevy-api",
+      "effect": "allow"
+    },
+    {
+      "action": "skill",
+      "resource": "hevy-export",
+      "effect": "allow"
     }
-  }
+  ]
 }

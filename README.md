@@ -118,9 +118,9 @@ To use alongside other agents, modify `opencode.json`:
 
 ```json
 {
-  "agent": {
-    "build": { "disable": false },
-    "plan": { "disable": false }
+  "agents": {
+    "build": { "disabled": false },
+    "plan": { "disabled": false }
   }
 }
 ```
