@@ -3,21 +3,22 @@ description: Personal AI gym trainer that analyzes Hevy workouts, suggests impro
 mode: primary
 model: anthropic/claude-sonnet-4-20250514
 color: "#22c55e"
-tools:
-  write: true
-  edit: true
-  bash: true
-  read: true
-  glob: true
-  grep: true
-permission:
-   edit:
-      "*": "deny"
-      ".env": "allow"
-      "data/**": "allow"
-  skill:
-    "hevy-api": "allow"
-    "hevy-export": "allow"
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: edit
+    resource: ".env"
+    effect: allow
+  - action: edit
+    resource: "data/**"
+    effect: allow
+  - action: skill
+    resource: "hevy-api"
+    effect: allow
+  - action: skill
+    resource: "hevy-export"
+    effect: allow
 ---
 
 # Gym AI Trainer
